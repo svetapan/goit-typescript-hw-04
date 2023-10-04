@@ -1,26 +1,31 @@
 import React, { createContext, useMemo, useState, useContext } from "react";
 import noop from "lodash/noop";
 
+// Додати тип Menu Selected
 type MenuIds = "first" | "second" | "last";
 type Menu = { id: MenuIds; title: string };
-
-// Додати тип Menu Selected
+type SelectedMenu = { id: MenuIds };
+type MenuSelected = { selectedMenu: SelectedMenu };
 
 const MenuSelectedContext = createContext<MenuSelected>({
   selectedMenu: {},
 });
 
 // Додайте тип MenuAction
+type MenuAction = {
+  // onSelectedMenu: SelectedMenu;
+  onSelectedMenu: (menu: SelectedMenu) => void;
+};
 
 const MenuActionContext = createContext<MenuAction>({
   onSelectedMenu: noop,
 });
 
 type PropsProvider = {
-  children; // Додати тип для children
+  children: React.ReactElement; // Додати тип для children
 };
 
-function MenuProvider({ children }: PropsProvider) {
+const MenuProvider = ({ children }: PropsProvider) => {
   // Додати тип для SelectedMenu він повинен містити { id }
   const [selectedMenu, setSelectedMenu] = useState<SelectedMenu>({});
 
@@ -45,19 +50,19 @@ function MenuProvider({ children }: PropsProvider) {
       </MenuSelectedContext.Provider>
     </MenuActionContext.Provider>
   );
-}
-
-type PropsMenu = {
-  menus; // Додайте вірний тип для меню
 };
 
-function MenuComponent({ menus }: PropsMenu) {
+type PropsMenu = {
+  menus: Menu[]; // Додайте вірний тип для меню
+};
+
+const MenuComponent = ({ menus }: PropsMenu) => {
   const { onSelectedMenu } = useContext(MenuActionContext);
   const { selectedMenu } = useContext(MenuSelectedContext);
 
   return (
     <>
-      {menus.map((menu) => (
+      {menus.map((menu: Menu) => (
         <div key={menu.id} onClick={() => onSelectedMenu({ id: menu.id })}>
           {menu.title}{" "}
           {selectedMenu.id === menu.id ? "Selected" : "Not selected"}
@@ -65,9 +70,9 @@ function MenuComponent({ menus }: PropsMenu) {
       ))}
     </>
   );
-}
+};
 
-export function ComponentApp() {
+export const ComponentApp = () => {
   const menus: Menu[] = [
     {
       id: "first",
@@ -88,4 +93,4 @@ export function ComponentApp() {
       <MenuComponent menus={menus} />
     </MenuProvider>
   );
-}
+};
