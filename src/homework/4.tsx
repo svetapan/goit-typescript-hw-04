@@ -4,7 +4,7 @@ import noop from "lodash/noop";
 // Додати тип Menu Selected
 type MenuIds = "first" | "second" | "last";
 type Menu = { id: MenuIds; title: string };
-type SelectedMenu = { id: MenuIds };
+type SelectedMenu = { id?: MenuIds };
 type MenuSelected = { selectedMenu: SelectedMenu };
 
 const MenuSelectedContext = createContext<MenuSelected>({
